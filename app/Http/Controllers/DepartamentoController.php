@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\departamento;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
+use Illuminate\Support\Facades\Validator;
 class DepartamentoController extends Controller
 {
     /**
@@ -20,7 +20,7 @@ class DepartamentoController extends Controller
     public function store(Request $request)
     {
         $rules = ['nombre'=> 'required|string|min:1|max:100'];
-        $validator = \Validator::make($request->input(),$rules);
+        $validator = Validator::make($request->input(),$rules);
         if($validator->fails()){
             return response()->json([
                 'status' => false,
@@ -51,7 +51,7 @@ class DepartamentoController extends Controller
     public function update(Request $request, departamento $departamento, $id)
     {
         $rules = ['nombre'=> 'required|string|min:1|max:100'];
-        $validator = \Validator::make($request->input(),$rules);
+        $validator = Validator::make($request->input(),$rules);
         if($validator->fails()){
             return response()->json([
                 'status' => false,
