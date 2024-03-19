@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\departamento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -13,8 +14,9 @@ class AuthController extends Controller
     public function create(Request $request){
         $rules=[
             'name' => 'required|string|max:100',
-            'email' => 'required|string|email|max:100|unique:users',
+            'email' => 'required|email|max:100|unique:users',
             'password' => 'required|string|min:8',
+            'departamento_id' => 'required|numeric',
         ];
         $validator = Validator::make($request->input(),$rules);
         if($validator->fails()){
@@ -23,10 +25,12 @@ class AuthController extends Controller
                 'errors'=> $validator->errors()->all()
             ],400);
         }
-        $user= User::create([
-            'name' => $request->name,"email"=> $request->email,
-            'password' => Hash::make($request->password)
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->departamento_id = $request->departamento_id;
+        $user->save();
         return response ()->json ([
             'status'=> true,
             ',message'=> 'usuario creado satisfactoriamente',

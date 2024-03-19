@@ -22,7 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('auth/register',[AuthController::class,'create']);
 Route::post('auth/login',[AuthController::class,'login']);
 Route::middleware(['auth:sanctum'])->group(function(){
-    Route::resource('departaments', DepartamentoController::class);
+    Route::middleware(['auth', 'departamento:Engineering Manager'])->group(function () {
+        Route::resource('departaments', DepartamentoController::class);
+    });
     Route::get('auth/logout',[AuthController::class,'logout']);
 });
 
