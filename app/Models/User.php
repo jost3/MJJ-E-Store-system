@@ -43,6 +43,6 @@ class User extends Authenticatable
     ];
     public function departamento()
     {
-        return $this->belongsTo(Departamento::class);
+        return $this->belongsTo(departamento::class);
     }
 }
