@@ -27,33 +27,44 @@ class ProductoController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $rules = [
-            'nombre'=> 'required|string|min:1|max:100',
-            'descripcion'=> 'required|string',
-            'precio'=> 'required|string|min:1|max:100',
-            'stock'=> 'required|string|min:1|max:100',
-            'imagen'=> 'required',  
-            'estado'=> 'required',
-            'categoria_id'=>'required|numeric'
-        ];
-        $validator = Validator::make($request->input(),$rules);
-        if($validator->fails()){
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()->all()
-            ],400);
-        }
-          // Guardar la imagen en el sistema de archivos y obtener su ruta
-        $rutaImagen = $request->file('imagen')->store('public/imagenes');
-        $producto = new Producto($request->except('imagen')); // Excluir la imagen de los datos del producto
-        $producto->imagen = $rutaImagen; // Asignar la ruta de la imagen
-        $producto->save();
+{
+    $rules = [
+        'nombre'=> 'required|string|min:1|max:100',
+        'descripcion'=> 'required|string',
+        'precio'=> 'required|min:1|max:100',
+        'stock'=> 'required|min:1|max:100',
+        'imagen'=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  
+        'estado'=> 'required',
+        'categoria_id'=>'required|numeric'
+    ];
+    $validator = Validator::make($request->all(), $rules);
+    if($validator->fails()){
         return response()->json([
-            'status' => true,
-            'message' => 'Producto creado satisfactoriamente'
-        ],200);
+            'status' => false,
+            'errors' => $validator->errors()->all()
+        ],400);
     }
+
+    // Obtener la imagen del formulario
+    $imagen = $request->file('imagen');
+
+    // Generar un nombre único para la imagen
+    $nombreImagen = 'imagen_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+
+    // Almacenar la imagen en el sistema de archivos
+    $imagen->storeAs('public/', $nombreImagen);
+
+    // Ruta de la imagen almacenada en el sistema de archivos
+    $rutaImagen = 'public/storage/' . $nombreImagen;
+
+    $producto = new Producto($request->except('imagen')); // Excluir la imagen de los datos del producto
+    $producto->imagen = $rutaImagen; // Asignar la ruta de la imagen
+    $producto->save();
+    return response()->json([
+        'status' => true,
+        'message' => 'Producto creado satisfactoriamente'
+    ],200);
+}
 
     /**
      * Display the specified resource.
@@ -75,37 +86,46 @@ class ProductoController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Producto $producto, $id)
-    {
-        $rules = [
-            'nombre'=> 'required|string|min:1|max:100',
-            'descripcion'=> 'required|string',
-            'precio'=> 'required|string|min:1|max:100',
-            'stock'=> 'required|string|min:1|max:100',
-            'imagen'=> 'required',  
-            'estado'=> 'required',
-            'categoria_id'=>'required|numeric'
-        ];
-        $validator = Validator::make($request->input(),$rules);
-        if($validator->fails()){
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()->all()
-            ],400);
-        }
-        try {
-            $producto = Producto::findOrFail($id);
-            $producto->update($request->input());
-            return response()->json([
-                'status' => true,
-                'message' => 'Producto actualizado satisfactoriamente'
-            ],200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Producto no encontrado'
-            ], 404);
-        }
+{
+    $rules = [
+        'nombre'=> 'required|string|min:1|max:100',
+        'descripcion'=> 'required|string',
+        'precio'=> 'required|min:1|max:100',
+        'stock'=> 'required|min:1|max:100',
+        'estado'=> 'required',
+        'categoria_id'=>'required|numeric'
+    ];
+
+    // Validar la imagen solo si se ha enviado una nueva imagen en la solicitud
+    if ($request->hasFile('imagen')) {
+        $rules['imagen'] = 'image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+    } else {
+        // Si no se envía una imagen nueva, excluirla de los datos a actualizar
+        unset($request['imagen']);
     }
+
+    $validator = Validator::make($request->all(), $rules);
+    if($validator->fails()){
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()->all()
+        ],400);
+    }
+    try {
+        $producto = Producto::findOrFail($id);
+        $producto->update($request->all()); // Usar $request->all() para obtener todos los datos de la solicitud
+        return response()->json([
+            'status' => true,
+            'message' => 'Producto actualizado satisfactoriamente'
+        ],200);
+    } catch (ModelNotFoundException $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Producto no encontrado'
+        ], 404);
+    }
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -126,6 +146,7 @@ class ProductoController extends Controller
             ], 404);
         }
     }
+    //obtiene la cantidad de productos por cada categoría 
     public function ProductbyCategory(){
         $productos = Producto::select(DB::raw('count(productos.id) as count'), 'categorias.nombre')
                         ->join('categorias', 'categorias.id', '=', 'productos.categoria_id')

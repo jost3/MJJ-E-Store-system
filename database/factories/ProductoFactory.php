@@ -32,10 +32,10 @@ class ProductoFactory extends Factory
         $nombreImagen = 'imagen_' . uniqid() . '.jpg';
 
         // Almacenar la imagen en el sistema de archivos
-        Storage::put('public/imagenes/' . $nombreImagen, $imagenBinaria);
+        Storage::put('public/' . $nombreImagen, $imagenBinaria);
 
         // Ruta de la imagen almacenada en el sistema de archivos
-        $rutaImagen = 'public/imagenes/' . $nombreImagen;
+        $rutaImagen = 'public/storage/' . $nombreImagen;
 
         return [
             'nombre' => $this->faker->name,
