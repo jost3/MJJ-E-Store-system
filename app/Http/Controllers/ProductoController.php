@@ -55,7 +55,7 @@ class ProductoController extends Controller
     $imagen->storeAs('public/', $nombreImagen);
 
     // Ruta de la imagen almacenada en el sistema de archivos
-    $rutaImagen = 'public/storage/' . $nombreImagen;
+    $rutaImagen = 'storage/' . $nombreImagen;
 
     $producto = new Producto($request->except('imagen')); // Excluir la imagen de los datos del producto
     $producto->imagen = $rutaImagen; // Asignar la ruta de la imagen

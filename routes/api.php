@@ -23,10 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('auth/register',[AuthController::class,'create']);
 Route::post('auth/login',[AuthController::class,'login']);
-Route::resource('category', CategoriaController::class);
-Route::resource('product', ProductoController::class);
-Route::get('productbycategory',[ProductoController::class,'ProductbyCategory']);
 Route::middleware(['auth:sanctum'])->group(function(){
+    Route::resource('category', CategoriaController::class);
+    Route::resource('product', ProductoController::class);
+    Route::get('productbycategory',[ProductoController::class,'ProductbyCategory']);
     Route::middleware(['auth', 'departamento:Battery Repairer'])->group(function () {
         Route::resource('departaments', DepartamentoController::class);
     });
