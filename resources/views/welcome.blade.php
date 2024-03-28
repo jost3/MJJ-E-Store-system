@@ -137,7 +137,7 @@
         <div class="moving-object object3"></div>
         <div class="moving-object object4"></div>
         <h1 class="title">MJJ-E-Store-system</h1>
-        <p class="lead">Bienvenido a la API MJJ-E-Store-system. Esta es la ruta de la API para poder consumirla.</p>
+        <p class="lead">Bienvenido al API MJJ-E-Store-system. Esta es la ruta principal para consumirla.</p>
         <div class="card">
             <h2 class="card-title">Información</h2>
             <p class="card-text">API en desarrollo, posibles fallas en su consumo, recuerde utilizar buenas prácticas para su óptimo uso</p>

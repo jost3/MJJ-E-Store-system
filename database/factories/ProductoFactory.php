@@ -35,7 +35,7 @@ class ProductoFactory extends Factory
         Storage::put('public/' . $nombreImagen, $imagenBinaria);
 
         // Ruta de la imagen almacenada en el sistema de archivos
-        $rutaImagen = 'public/storage/' . $nombreImagen;
+        $rutaImagen = 'storage/' . $nombreImagen;
 
         return [
             'nombre' => $this->faker->name,

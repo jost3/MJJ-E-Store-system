@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\VentasController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,6 +27,7 @@ Route::post('auth/login',[AuthController::class,'login']);
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::resource('category', CategoriaController::class);
     Route::resource('product', ProductoController::class);
+    Route::resource('venta', VentasController::class);
     Route::get('productbycategory',[ProductoController::class,'ProductbyCategory']);
     Route::middleware(['auth', 'departamento:Battery Repairer'])->group(function () {
         Route::resource('departaments', DepartamentoController::class);

@@ -55,19 +55,28 @@ class AuthController extends Controller
                 'errors'=> ['no autorizado']
             ],401);
         }
-        $user = User::where('email',$request->email)->first();
-        return response ()->json ([
+       $user = User::where('email', $request->email)->first();
+        $departamento_nombre = null;
+        
+        if ($user->departamento_id) {
+            $departamento_nombre = departamento::where('id', $user->departamento_id)->value('nombre');
+        }
+        
+        return response()->json([
             'status'=> true,
-            'message'=> 'usuario logueado satisfactoriamente',
-            'data' =>$user,
-            'token' => $user->createToken('API TOKEN')->plainTextToken   
-        ],200);
+            'message'=> 'Usuario logueado satisfactoriamente',
+            'data' => [
+                'user' => $user,
+                'departamento' => $departamento_nombre
+            ],
+            'token' => $user->createToken('API TOKEN')->plainTextToken
+        ], 200);
     }
     public function logout(){
         auth()->user()->tokens()->delete();
         return response ()->json ([
             'status'=> true,
-            'message'=> 'usuario ha cerrado su sesión satisfactoriamente'
+            'message'=> 'usuario ha cerrado su sesi贸n satisfactoriamente'
         ],200);
     }
     
