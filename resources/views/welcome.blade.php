@@ -143,7 +143,7 @@
             <p class="card-text">API en desarrollo, posibles fallas en su consumo, recuerde utilizar buenas prácticas para su óptimo uso</p>
             <div class="names">
                 <div class="name">Josue Cotera</div>
-                <div class="name">Geronimo Martin</div>
+                <div class="name">Elberth Martin</div>
                 <div class="name">Johan Abad</div>
             </div>
         </div>

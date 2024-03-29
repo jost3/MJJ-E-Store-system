@@ -25,6 +25,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('auth/register',[AuthController::class,'create']);
 Route::post('auth/login',[AuthController::class,'login']);
 Route::middleware(['auth:sanctum'])->group(function(){
+    /* rutas para modificar, ver , editar y eliminar usuario*/
+    Route::get('users', [AuthController::class, 'index']);
+    Route::get('users/{id}', [AuthController::class, 'show']);
+    Route::put('users/{id}', [AuthController::class, 'update']);
+    Route::delete('users/{id}', [AuthController::class, 'destroy']);
+      /* demas rutas*/
     Route::resource('category', CategoriaController::class);
     Route::resource('product', ProductoController::class);
     Route::resource('venta', VentasController::class);
