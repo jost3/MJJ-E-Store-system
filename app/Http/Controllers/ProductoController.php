@@ -86,45 +86,57 @@ class ProductoController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Producto $producto, $id)
-{
-    $rules = [
-        'nombre'=> 'required|string|min:1|max:100',
-        'descripcion'=> 'required|string',
-        'precio'=> 'required|min:1|max:100',
-        'stock'=> 'required|min:1|max:100',
-        'estado'=> 'required',
-        'categoria_id'=>'required|numeric'
-    ];
-
-    // Validar la imagen solo si se ha enviado una nueva imagen en la solicitud
-    if ($request->hasFile('imagen')) {
-        $rules['imagen'] = 'image|mimes:jpeg,png,jpg,gif,svg|max:2048';
-    } else {
-        // Si no se envía una imagen nueva, excluirla de los datos a actualizar
-        unset($request['imagen']);
+    {
+        $rules = [
+            'nombre'=> 'required|string|min:1|max:100',
+            'descripcion'=> 'required|string',
+            'precio'=> 'required|min:1|max:100',
+            'stock'=> 'required|min:1|max:100',
+            'estado'=> 'required',
+            'categoria_id'=>'required|numeric'
+        ];
+    
+        // Validar la imagen solo si se ha enviado una nueva imagen en la solicitud
+        if ($request->hasFile('imagen')) {
+            $rules['imagen'] = 'image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+        } else {
+            // Si no se envía una imagen nueva, excluirla de los datos a actualizar
+            unset($request['imagen']);
+        }
+    
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()->all()
+            ],400);
+        }
+        try {
+            $producto = Producto::findOrFail($id);
+            $producto->update($request->all()); // Usar $request->all() para obtener todos los datos de la solicitud
+    
+            // Actualizar la imagen si se envió una nueva imagen en la solicitud
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $nombreImagen = 'imagen_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                $imagen->storeAs('public/', $nombreImagen);
+                $rutaImagen = 'storage/' . $nombreImagen;
+                $producto->imagen = $rutaImagen;
+                $producto->save();
+            }
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Producto actualizado satisfactoriamente'
+            ],200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Producto no encontrado'
+            ], 404);
+        }
     }
-
-    $validator = Validator::make($request->all(), $rules);
-    if($validator->fails()){
-        return response()->json([
-            'status' => false,
-            'errors' => $validator->errors()->all()
-        ],400);
-    }
-    try {
-        $producto = Producto::findOrFail($id);
-        $producto->update($request->all()); // Usar $request->all() para obtener todos los datos de la solicitud
-        return response()->json([
-            'status' => true,
-            'message' => 'Producto actualizado satisfactoriamente'
-        ],200);
-    } catch (ModelNotFoundException $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Producto no encontrado'
-        ], 404);
-    }
-}
+    
 
 
     /**
