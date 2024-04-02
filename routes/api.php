@@ -30,11 +30,15 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('users/{id}', [AuthController::class, 'show']);
     Route::put('users/{id}', [AuthController::class, 'update']);
     Route::delete('users/{id}', [AuthController::class, 'destroy']);
-      /* demas rutas*/
-    Route::resource('category', CategoriaController::class);
-    Route::resource('product', ProductoController::class);
-    Route::resource('venta', VentasController::class);
+      /* rutas de productos*/
     Route::get('productbycategory',[ProductoController::class,'ProductbyCategory']);
+    Route::resource('product', ProductoController::class);
+    /* rutas de categoria*/
+    Route::resource('category', CategoriaController::class);
+    /* rutas de venta*/
+    Route::resource('venta', VentasController::class);
+    Route::get('ventdia',[VentasController::class,'ventasDiarias']);
+    
     Route::middleware(['auth', 'departamento:Battery Repairer'])->group(function () {
         Route::resource('departaments', DepartamentoController::class);
     });

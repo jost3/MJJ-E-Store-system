@@ -150,4 +150,18 @@ class VentasController extends Controller
             ], 500);
         }
     }
+    public function ventasDiarias()
+    {
+        try {
+            $ventasDiarias = DB::table('ventas')
+                ->select(DB::raw('DATE(created_at) as fecha'), DB::raw('SUM(total_venta) as total_ventas'))
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->get();
+            
+            return response()->json($ventasDiarias);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Ocurrió un error al obtener las ventas diarias'], 500);
+        }
+    }
+    
 }
