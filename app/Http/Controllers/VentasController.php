@@ -35,6 +35,8 @@ class VentasController extends Controller
             'id_producto' => 'required|exists:productos,id',
             'precio_unitario' => 'required|numeric|min:0',
             'total_venta' => 'required|numeric|min:0',
+            'estado'=> 'required',
+            'cantidad'=> 'required',
         ];
     
         $validator = Validator::make($request->all(), $rules);
@@ -51,6 +53,8 @@ class VentasController extends Controller
             $ventas->id_producto = $request->input('id_producto');
             $ventas->precio_unitario = $request->input('precio_unitario');
             $ventas->total_venta = $request->input('total_venta');
+            $ventas->estado = $request->input('estado');
+            $ventas->cantidad = $request->input('cantidad');
             $ventas->save();
     
             return response()->json([
@@ -72,7 +76,7 @@ class VentasController extends Controller
     {
         try {
             $ventas = Ventas::with(['Producto:id,nombre', 'User:id,name'])
-                ->select('id', 'precio_unitario', 'total_venta', 'id_producto', 'id_usuario', 'created_at', 'updated_at')
+                ->select('id', 'precio_unitario', 'total_venta', 'id_producto', 'id_usuario','estado','cantidad', 'created_at', 'updated_at')
                 ->findOrFail($id);
     
             $ventas->nombre_producto = $ventas->Producto->nombre;
@@ -100,6 +104,7 @@ class VentasController extends Controller
             'id_producto' => 'required|exists:productos,id',
             'precio_unitario' => 'required|numeric|min:0',
             'total_venta' => 'required|numeric|min:0',
+            'estado' => 'required',
         ];
     
         $validator = Validator::make($request->input(), $rules);
