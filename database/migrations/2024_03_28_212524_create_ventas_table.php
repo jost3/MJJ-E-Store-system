@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('precio_unitario', 10, 2);
             $table->decimal('total_venta', 10, 2);
+            $table->enum('estado', ['pendiente', 'realziado'])->default('pendiente');
             $table->foreignId('id_producto')->constrained('productos')->onDelete('cascade');
             $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade');
             $table->timestamps();
