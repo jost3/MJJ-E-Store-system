@@ -98,38 +98,36 @@ class VentasController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Ventas $ventas, $id)
-    {
-        $rules = [
-            'id_usuario' => 'required|exists:users,id',
-            'id_producto' => 'required|exists:productos,id',
-            'precio_unitario' => 'required|numeric|min:0',
-            'total_venta' => 'required|numeric|min:0',
-            'estado' => 'required',
-        ];
-    
-        $validator = Validator::make($request->input(), $rules);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()->all()
-            ], 400);
-        }
-    
-        try {
-            $ventas = Ventas::findOrFail($id);
-            $ventas->update($request->input());
-            return response()->json([
-                'status' => true,
-                'message' => 'Venta actualizada satisfactoriamente'
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Error al actualizar la venta'
-            ], 500);
-        }
+{
+    $rules = [
+        'estado' => 'required',
+    ];
+
+    $validator = Validator::make($request->only('estado'), $rules);
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()->all()
+        ], 400);
     }
-    
+
+    try {
+        $venta = Ventas::findOrFail($id);
+        $venta->estado = $request->input('estado');
+        $venta->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Estado de venta actualizado satisfactoriamente'
+        ], 200);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Error al actualizar el estado de la venta'
+        ], 500);
+    }
+}
+
 
     /**
      * Remove the specified resource from storage.
